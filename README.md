@@ -66,7 +66,13 @@ Sign into \`/admin.html\` with the account whose profile has the \`admin\` role.
 
 Cover URLs should be public HTTPS image URLs. For private video files, use private Supabase Storage buckets and short-lived signed URLs from a server-side endpoint; do not make private files public.
 
-## 7. Security and remaining production work
+## Secure playback and downloads
+
+The watch page supports ordinary MP4 sources and compatible HLS (.m3u8) streams through native browser playback or hls.js. The direct download link has been removed from the player preview so it does not expose a second public download URL. The browser's `controlsList="nodownload"` and context-menu suppression are only interface friction, not security.
+
+**Important:** this does not yet provide DRM or guarantee that users cannot copy a stream. HLS AES-128 encryption is not equivalent to DRM if the decryption key can be fetched by the client. To enforce that offline copies play only in an authorised app, choose and configure a DRM provider/license server (for example, Widevine on supported Android/Chrome devices, FairPlay on Apple platforms, and PlayReady where supported), package media for the selected DRM, issue short-lived playback licenses, and build a protected offline-download flow in a native app or DRM-capable player. Do not advertise videos as protected until this has been implemented and tested. VLC cannot be embedded as the native browser player; this project uses the browser media engine with HLS support.
+
+## 8. Security and remaining production work
 
 - Never commit a database password, Supabase secret key, or service-role key.
 - RLS protects database rows; frontend visibility checks alone are not security.
