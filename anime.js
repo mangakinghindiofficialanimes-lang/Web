@@ -17,8 +17,20 @@
   let anime=null;
   function renderHeader(item){
     const cover=safeUrl(item.cover_url);
-    $("detailHero").innerHTML='<div class="detail-cover" style="--cover:'+(item.color||"linear-gradient(135deg,#30235d,#6c4d9f 50%,#ed9fce)")+'">'+(cover?'<img src="'+esc(cover)+'" alt="">':'<span>'+esc((item.title||"NA").split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase())+'</span>')+'</div><div class="detail-copy"><div class="eyebrow">'+esc((item.genre||"ANIME").toUpperCase())+' · '+esc(item.release_year||"YEAR NOT SET")+'</div><h1>'+esc(item.title)+'</h1><p>'+esc(item.synopsis||"More information coming soon.")+'</p><div class="detail-tags"><span>'+esc(item.status==="published"?"Published":"Sample title")+'</span><span>NITIN ANIMES</span></div></div>';
+    $("detailHero").innerHTML='<div class="detail-cover" style="--cover:'+(item.color||"linear-gradient(135deg,#30235d,#6c4d9f 50%,#ed9fce)")+'">'+(cover?'<img src="'+esc(cover)+'" alt="">':'<span>'+esc((item.title||"NA").split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase())+'</span>')+'</div><div class="detail-copy"><div class="eyebrow">'+esc((item.genre||"ANIME").toUpperCase())+' · '+esc(item.release_year||"YEAR NOT SET")+'</div><h1>'+esc(item.title)+'</h1><p>'+esc(item.synopsis||"More information coming soon.")+'</p><div class="detail-tags"><span>'+esc(item.status==="published"?"Published":"Sample title")+'</span><span>NITIN ANIMES</span></div><div class="hero-actions"><button class="secondary-button" id="saveToWatchlist" type="button">＋ Save to watchlist</button><a class="secondary-button" href="account.html">My account</a></div></div>';
     document.title=item.title+" — NITIN ANIMES";
+    const saveButton=$("saveToWatchlist");
+    if(saveButton)saveButton.addEventListener("click",async()=>{
+      if(!client){alert("Connect Supabase first, then sign in from My account.");return;}
+      const {data:{user}}=await client.auth.getUser();
+      if(!user){location.href="account.html";return;}
+      if(item.demo){alert("Sample titles cannot be saved. Add this title to your configured catalogue first.");return;}
+      saveButton.disabled=true;
+      const {error}=await client.from("watchlist").upsert({user_id:user.id,anime_id:item.id},{onConflict:"user_id,anime_id"});
+      saveButton.disabled=false;
+      if(error){alert("Could not save to watchlist. Apply the updated database schema and try again.");return;}
+      saveButton.textContent="✓ Saved to watchlist";
+    });
   }
   async function record(eventType,episodeId=null){
     if(!client||!anime||anime.demo)return;
