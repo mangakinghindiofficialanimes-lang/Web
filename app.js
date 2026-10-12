@@ -62,7 +62,7 @@ function renderCards() {
       '<span class="cover-status">' + (item.demo ? "SAMPLE" : "CATALOGUE") + '</span>' + coverMarkup + '</div>' +
       '<div class="card-body"><div class="card-topline"><span class="card-genre">' + escapeText(item.genre || "Anime") + '</span><span class="card-year">' + escapeText(item.release_year || "—") + '</span></div>' +
       '<h3>' + escapeText(item.title) + '</h3><p>' + escapeText(item.synopsis || "More information coming soon.") + '</p>' +
-      '<div class="card-footer"><span class="card-type">' + escapeText(item.type || "Series") + '</span><button class="details-button" data-id="' + escapeText(item.id) + '">View details <span>↗</span></button></div></div></article>';
+      '<div class="card-footer"><span class="card-type">' + escapeText(item.type || "Series") + '</span><a class="details-button" href="anime.html?id=' + encodeURIComponent(item.id) + '">View details <span>↗</span></a></div></div></article>';
   }).join("");
 }
 async function loadCatalogue() {
