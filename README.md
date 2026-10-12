@@ -5,8 +5,8 @@ A mobile-friendly anime discovery website starter with a custom crown wordmark, 
 ## What is implemented in the repository
 
 - Public catalogue with search and genre filters; reads published titles from Supabase when configured.
-- Dedicated anime detail pages (`anime.html`) and episode watch pages (`watch.html`), including authorised video playback and download links.
-- Anime detail dialogs and published episode list; HTML video playback for authorised direct video URLs and links to authorised downloads.
+- Dedicated anime detail pages (`anime.html`) and a Widevine/Shaka protected-player integration on `watch.html`; direct MP4 playback and exposed download links are disabled in the protected player.
+- Protected offline-library UI using browser-managed Shaka storage, subject to provider support for persistent Widevine licenses.
 - Admin sign-in using Supabase Auth and a database-backed admin role check.
 - Admin dashboard UI for anime and episode CRUD, user account/role management through an Edge Function, and recent activity analytics.
 - Member account page with email/password sign-up and sign-in, private watchlist, and continue-watching progress.
@@ -77,7 +77,7 @@ Netlify/GitHub and Supabase do not issue Widevine licenses or package videos for
 1. Create a provider account and configure a Widevine license service.
 2. Package videos you own or are licensed to distribute as DRM-encrypted DASH (.mpd) or supported DRM HLS (.m3u8). Upload the encrypted segments and manifest to storage/CDN with the provider's required CORS and byte-range settings.
 3. In drm-config.js, set widevineLicenseServerUrl to the provider's HTTPS license URL and licenseTokenEndpoint to your server-side authorization endpoint. These are endpoint URLs, not secrets.
-4. Implement and deploy the drm-license-auth endpoint as a Supabase Edge Function or provider-supported backend. It must validate the Supabase access token, check the user's episode entitlement, create provider-specific short-lived license authorization on the server, and return a JSON object with a headers map using the exact header format required by the provider. Never return signing keys or provider secrets. Do not blindly proxy arbitrary URLs or authorize arbitrary episode IDs.
+4. The repository includes `supabase/functions/drm-license-auth/index.ts` as a fail-closed scaffold. Deploy it with `supabase functions deploy drm-license-auth`, then integrate your chosen provider's server-side SDK/API. The scaffold validates the signed-in user and published episode, then returns HTTP 503 until a provider adapter is implemented. The finished endpoint must create provider-specific short-lived license authorization and return a JSON object with a headers map using the exact header format required by the provider. Never return signing keys or provider secrets. Do not blindly proxy arbitrary URLs or authorize arbitrary episode IDs.
 5. Configure the provider license server to reject requests without valid authorization and to issue persistent licenses only when supported. Allowlist your website origin in the provider's CORS settings.
 6. Test a real encrypted sample in Chrome on Android and verify license requests in provider logs before adding production videos.
 
