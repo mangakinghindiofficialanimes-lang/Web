@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090b12"><title>Admin Portal — NITIN ANIMES</title><link rel="stylesheet" href="styles.css"></head>
+<body class="admin-page">
+<header class="topbar"><a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 36 12 13l12 12 12-12 5 23H7Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M17 35V24l7 7 7-7v11" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="12" cy="10" r="3" fill="#a78bfa"/><circle cx="24" cy="7" r="3" fill="#a78bfa"/><circle cx="36" cy="10" r="3" fill="#a78bfa"/></svg><span>NITIN <b>ANIMES</b></span></a><a class="admin-link" href="index.html">← Back to site</a></header>
+<main class="admin-wrap"><section class="admin-card"><div class="eyebrow">PRIVATE AREA</div><h1>Admin <span class="gradient-text">portal.</span></h1><p class="admin-intro">Sign in with your Supabase Auth account. Only accounts granted the admin role in the database should be able to access management tools.</p>
+<div id="configWarning" class="notice">Setup needed: add your Supabase project URL and public anon/publishable key in <code>supabase-config.js</code>. Never use a service-role key in browser code.</div>
+<form id="loginForm" class="admin-form"><label for="email">Email address</label><input id="email" type="email" autocomplete="username" required placeholder="admin@example.com"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Your password"><button class="primary-button" type="submit">Sign in securely <span>↗</span></button><p id="authMessage" class="auth-message" role="status"></p></form>
+<div id="adminDashboard" class="admin-dashboard hidden"><h2>Welcome to the admin area</h2><p id="adminIdentity"></p><div class="notice">Authentication and admin-role verification are connected. Catalogue editing, user management, and analytics are not yet implemented in this starter.</div><button id="signOutButton" class="secondary-button">Sign out</button></div>
+<p class="admin-footnote">Access is enforced by Supabase Row Level Security, not just by hiding this page.</p></section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="admin.js" defer></script>
+</body></html>
