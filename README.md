@@ -5,6 +5,7 @@ A mobile-friendly anime discovery website starter with a custom crown wordmark, 
 ## What is implemented in the repository
 
 - Public catalogue with search and genre filters; reads published titles from Supabase when configured.
+- Dedicated anime detail pages (`anime.html`) and episode watch pages (`watch.html`), including authorised video playback and download links.
 - Anime detail dialogs and published episode list; HTML video playback for authorised direct video URLs and links to authorised downloads.
 - Admin sign-in using Supabase Auth and a database-backed admin role check.
 - Admin dashboard UI for anime and episode CRUD, user account/role management through an Edge Function, and recent activity analytics.
