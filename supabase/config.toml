@@ -1,0 +1,5 @@
+# Replace with your Supabase project's actual project reference before CLI deployment.
+project_id = "YOUR_PROJECT_REF"
+
+[functions.manage-users]
+verify_jwt = true
