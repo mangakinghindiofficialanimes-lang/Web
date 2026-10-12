@@ -108,6 +108,7 @@ async function openDetails(id) {
       (video ? '<button class="secondary-button episode-play" data-video="' + escapeText(video) + '" data-episode="' + escapeText(ep.id) + '">Play</button>' : '') +
       (download ? '<a class="secondary-button" href="' + escapeText(download) + '" target="_blank" rel="noopener noreferrer">Download</a>' : '') + '</div>';
   }).join("") + '<div id="playerMount"></div></div>';
+  episodeArea.querySelectorAll("a[href]").forEach(link => link.addEventListener("click", async () => { const {data:{user}} = await supabaseClient.auth.getUser(); await supabaseClient.from("watch_events").insert({user_id:user?.id || null, anime_id:item.id, episode_id:link.closest(".episode-row")?.querySelector("[data-episode]")?.dataset.episode || null, event_type:"download"}); }));
   episodeArea.querySelectorAll(".episode-play").forEach(button => button.addEventListener("click", async () => {
     const mount = document.getElementById("playerMount");
     mount.innerHTML = '<video controls playsinline preload="metadata" style="width:100%;margin-top:12px;border-radius:12px;background:#000" src="' + escapeText(button.dataset.video) + '">Your browser does not support HTML video.</video>';
