@@ -20,7 +20,7 @@
    if(!result||!result.headers||typeof result.headers!=="object")throw new Error("DRM authorization endpoint must return a headers object.");
    for(const [name,value] of Object.entries(result.headers))if(/^[a-z0-9-]+$/i.test(name)&&typeof value==="string")request.headers[name]=value;
   });
-  storage=new shaka.offline.Storage(player);storage.configure({offline:{usePersistentLicense:true},drm:{servers:{"com.widevine.alpha":drm.widevineLicenseServerUrl}});
+  storage=new shaka.offline.Storage(player);storage.configure({offline:{usePersistentLicense:true},drm:{servers:{"com.widevine.alpha":drm.widevineLicenseServerUrl}}});
  }
  async function init(){
   if(!id||!client){$("watchTitle").textContent="Protected episode unavailable";notice("Configure Supabase and open a valid published episode ID.",true);return;}
