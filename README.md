@@ -66,11 +66,30 @@ Sign into \`/admin.html\` with the account whose profile has the \`admin\` role.
 
 Cover URLs should be public HTTPS image URLs. For private video files, use private Supabase Storage buckets and short-lived signed URLs from a server-side endpoint; do not make private files public.
 
-## Secure playback and downloads
+## 7. Widevine DRM and protected offline playback
 
-The watch page supports ordinary MP4 sources and compatible HLS (.m3u8) streams through native browser playback or hls.js. The direct download link has been removed from the player preview so it does not expose a second public download URL. The browser's `controlsList="nodownload"` and context-menu suppression are only interface friction, not security.
+The watch page now uses Shaka Player with Widevine DRM configuration and refuses to fall back to clear MP4 playback. It expects an HTTPS DASH .mpd or DRM-packaged HLS .m3u8 manifest, a real Widevine license server, and a server-side authorization endpoint. This is a browser media player, not VLC embedded in Chrome.
 
-**Important:** this does not yet provide DRM or guarantee that users cannot copy a stream. HLS AES-128 encryption is not equivalent to DRM if the decryption key can be fetched by the client. To enforce that offline copies play only in an authorised app, choose and configure a DRM provider/license server (for example, Widevine on supported Android/Chrome devices, FairPlay on Apple platforms, and PlayReady where supported), package media for the selected DRM, issue short-lived playback licenses, and build a protected offline-download flow in a native app or DRM-capable player. Do not advertise videos as protected until this has been implemented and tested. VLC cannot be embedded as the native browser player; this project uses the browser media engine with HLS support.
+### External service you must configure
+
+Netlify/GitHub and Supabase do not issue Widevine licenses or package videos for DRM. Choose a commercial DRM/video platform that explicitly supports Google Widevine, encrypted DASH/HLS packaging, license authorization, and persistent/offline licenses for Android Chrome. Ask the vendor to confirm persistent browser licenses on your target devices before paying. Vendors to evaluate include castLabs DRMtoday, BuyDRM KeyOS, and EZDRM; these are examples to investigate, not services already integrated or endorsed by this repository.
+
+1. Create a provider account and configure a Widevine license service.
+2. Package videos you own or are licensed to distribute as DRM-encrypted DASH (.mpd) or supported DRM HLS (.m3u8). Upload the encrypted segments and manifest to storage/CDN with the provider's required CORS and byte-range settings.
+3. In drm-config.js, set widevineLicenseServerUrl to the provider's HTTPS license URL and licenseTokenEndpoint to your server-side authorization endpoint. These are endpoint URLs, not secrets.
+4. Implement and deploy the drm-license-auth endpoint as a Supabase Edge Function or provider-supported backend. It must validate the Supabase access token, check the user's episode entitlement, create provider-specific short-lived license authorization on the server, and return a JSON object with a headers map using the exact header format required by the provider. Never return signing keys or provider secrets. Do not blindly proxy arbitrary URLs or authorize arbitrary episode IDs.
+5. Configure the provider license server to reject requests without valid authorization and to issue persistent licenses only when supported. Allowlist your website origin in the provider's CORS settings.
+6. Test a real encrypted sample in Chrome on Android and verify license requests in provider logs before adding production videos.
+
+### Protected offline behavior
+
+The Save for offline button uses Shaka browser offline storage and requests a persistent DRM license. It stores protected media in the browser-managed storage, not as a normal MP4 file. The Offline library can list, play, and delete content saved in that browser profile. This requires the DRM provider to permit persistent Widevine licenses, browser/device support, sufficient storage, and a valid license period. Clearing browser site data may delete saved content. The Shaka runtime is cached after its first successful online load, but initial setup must happen online.
+
+The nodownload control and context-menu suppression are only interface restrictions. DRM raises the barrier to copying but cannot guarantee prevention of screen recording, rooted-device capture, or every attack. FairPlay and PlayReady are not configured in this Android-first implementation.
+
+### Current status
+
+The repository contains the player integration and endpoint placeholders only. It is not yet working DRM until you select a provider, package encrypted media, and deploy the authorization endpoint. Do not paste provider secrets into GitHub, drm-config.js, or browser JavaScript.
 
 ## 8. Security and remaining production work
 
