@@ -9,6 +9,7 @@ A mobile-friendly anime discovery website starter with a custom crown wordmark, 
 - Anime detail dialogs and published episode list; HTML video playback for authorised direct video URLs and links to authorised downloads.
 - Admin sign-in using Supabase Auth and a database-backed admin role check.
 - Admin dashboard UI for anime and episode CRUD, user account/role management through an Edge Function, and recent activity analytics.
+- Member account page with email/password sign-up and sign-in, private watchlist, and continue-watching progress.
 - Supabase SQL schema with Row Level Security (RLS).
 - Netlify static-hosting settings.
 
@@ -49,13 +50,17 @@ The hosted function receives the project's server-side environment variables. If
 
 Guide: [Deploy from a repository](https://docs.netlify.com/start/quickstarts/deploy-from-repository/).
 
-## 4. Add anime and episode sources
+## 4. Member accounts and personal library
+
+Open `account.html` to create an account or sign in. After applying the updated `supabase/schema.sql`, members can see their private watchlist and continue-watching progress. Playback progress is saved only for a signed-in user; anonymous viewing still works but is not attached to a personal account.
+
+## 5. Add anime and episode sources
 
 Sign into \`/admin.html\` with the account whose profile has the \`admin\` role. Add anime, then add episodes. Only use video/download URLs for content you own or are authorised to distribute. Direct \`.mp4\` URLs work with the built-in HTML video player; third-party providers may need their own permitted embed/player integration. Do not upload or link copyrighted episodes without permission.
 
 Cover URLs should be public HTTPS image URLs. For private video files, use private Supabase Storage buckets and short-lived signed URLs from a server-side endpoint; do not make private files public.
 
-## 5. Security and remaining production work
+## 6. Security and remaining production work
 
 - Never commit a database password, Supabase secret key, or service-role key.
 - RLS protects database rows; frontend visibility checks alone are not security.
