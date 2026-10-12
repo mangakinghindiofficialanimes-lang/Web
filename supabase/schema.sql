@@ -101,3 +101,30 @@ grant select,update on public.profiles to authenticated;
 
 -- After your first account has been created, grant admin only to your own UUID:
 -- update public.profiles set role='admin' where id='YOUR-AUTH-USER-UUID';
+
+
+-- Member features: private watchlists and per-user playback progress.
+create table if not exists public.watchlist (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  anime_id uuid not null references public.anime(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, anime_id)
+);
+create table if not exists public.watch_progress (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  episode_id uuid not null references public.episodes(id) on delete cascade,
+  position_seconds double precision not null default 0 check (position_seconds >= 0),
+  duration_seconds double precision not null default 0 check (duration_seconds >= 0),
+  updated_at timestamptz not null default now(),
+  primary key (user_id, episode_id)
+);
+create index if not exists watch_progress_user_updated_idx on public.watch_progress(user_id, updated_at desc);
+alter table public.watchlist enable row level security;
+alter table public.watch_progress enable row level security;
+drop policy if exists "Users manage own watchlist" on public.watchlist;
+create policy "Users manage own watchlist" on public.watchlist for all to authenticated
+using (user_id=(select auth.uid())) with check (user_id=(select auth.uid()));
+drop policy if exists "Users manage own playback progress" on public.watch_progress;
+create policy "Users manage own playback progress" on public.watch_progress for all to authenticated
+using (user_id=(select auth.uid())) with check (user_id=(select auth.uid()));
+grant select,insert,update,delete on public.watchlist,public.watch_progress to authenticated;
