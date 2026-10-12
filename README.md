@@ -11,6 +11,8 @@ A mobile-friendly anime discovery website starter with a custom crown wordmark, 
 - Admin dashboard UI for anime and episode CRUD, user account/role management through an Edge Function, and recent activity analytics.
 - Member account page with email/password sign-up and sign-in, private watchlist, and continue-watching progress.
 - Supabase SQL schema with Row Level Security (RLS).
+- Installable Progressive Web App (PWA) manifest and original crown app icon.
+- Offline fallback and cache for the static site shell; streaming, authentication and live data still need internet.
 - Netlify static-hosting settings.
 
 The admin dashboard and live catalogue require your Supabase project to be configured. User management additionally requires deploying the Edge Function below. Do not treat an unconfigured preview as production-ready.
@@ -40,7 +42,11 @@ supabase functions deploy manage-users
 \`\`\`
 The hosted function receives the project's server-side environment variables. If your project setup uses custom environment names, configure \`SUPABASE_URL\`, \`SUPABASE_ANON_KEY\`, and \`SUPABASE_SERVICE_ROLE_KEY\` as server-side function secrets. Never commit them. The function code uses the legacy service-role environment variable as a server-only secret; use your current Supabase dashboard's secret key configuration appropriate for your project.
 
-## 3. Deploy the site to Netlify
+## 3. Installable app and offline support
+
+The homepage, anime details, watch page, and account page register `pwa.js`. On a supported browser over HTTPS, visitors may use the browser menu to install NITIN ANIMES. The service worker caches the static site shell and shows `offline.html` when navigation fails offline. Supabase data, sign-in, video streaming, and downloads are not available without a connection. If you update static assets, bump `CACHE_NAME` in `sw.js` so devices refresh the cache.
+
+## 4. Deploy the site to Netlify
 
 1. Open [Netlify](https://app.netlify.com/).
 2. Choose **Add new project → Import an existing project**, then select this GitHub repository.
@@ -50,17 +56,17 @@ The hosted function receives the project's server-side environment variables. If
 
 Guide: [Deploy from a repository](https://docs.netlify.com/start/quickstarts/deploy-from-repository/).
 
-## 4. Member accounts and personal library
+## 5. Member accounts and personal library
 
 Open `account.html` to create an account or sign in. After applying the updated `supabase/schema.sql`, members can see their private watchlist and continue-watching progress. Playback progress is saved only for a signed-in user; anonymous viewing still works but is not attached to a personal account.
 
-## 5. Add anime and episode sources
+## 6. Add anime and episode sources
 
 Sign into \`/admin.html\` with the account whose profile has the \`admin\` role. Add anime, then add episodes. Only use video/download URLs for content you own or are authorised to distribute. Direct \`.mp4\` URLs work with the built-in HTML video player; third-party providers may need their own permitted embed/player integration. Do not upload or link copyrighted episodes without permission.
 
 Cover URLs should be public HTTPS image URLs. For private video files, use private Supabase Storage buckets and short-lived signed URLs from a server-side endpoint; do not make private files public.
 
-## 6. Security and remaining production work
+## 7. Security and remaining production work
 
 - Never commit a database password, Supabase secret key, or service-role key.
 - RLS protects database rows; frontend visibility checks alone are not security.
