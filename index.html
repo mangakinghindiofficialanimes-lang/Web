@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090b12">
+  <meta name="description" content="Discover your next anime with NITIN ANIMES. Browse the library and watch videos you have permission to stream.">
+  <title>NITIN ANIMES — Your Anime Universe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="NITIN ANIMES home">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 36 12 13l12 12 12-12 5 23H7Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M17 35V24l7 7 7-7v11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" fill="#a78bfa"/><circle cx="24" cy="7" r="3" fill="#a78bfa"/><circle cx="36" cy="10" r="3" fill="#a78bfa"/></svg>
+      <span>NITIN <b>ANIMES</b></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="nav-link active" href="#home">Home</a><a class="nav-link" href="#library">Explore</a><a class="nav-link" href="#about">About</a>
+    </nav>
+    <div class="top-actions"><a class="admin-link" href="admin.html">Admin</a><button class="icon-button" id="themeHint" aria-label="Site information" title="About this site">i</button></div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot"></span> YOUR NEXT ADVENTURE STARTS HERE</div>
+        <h1>Stories that<br>stay <span class="gradient-text">with you.</span></h1>
+        <p class="hero-description">Explore worlds, meet unforgettable characters, and find your next favourite series in one place.</p>
+        <div class="hero-actions"><a class="primary-button" href="#library">Explore library <span aria-hidden="true">↗</span></a><a class="secondary-button" href="#about">Discover Nitin Animes</a></div>
+        <div class="hero-note"><span class="note-icon">✦</span><span>A fan-made discovery experience. Videos are shown only when a permitted source is configured.</span></div>
+      </div>
+      <div class="hero-art" aria-label="Abstract original anime-inspired artwork">
+        <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="hero-sigil">N<span>✦</span>A</div>
+        <div class="hero-spark spark-a">✧</div><div class="hero-spark spark-b">✦</div><div class="hero-spark spark-c">✧</div>
+        <div class="hero-art-label"><span>THE ANIME UNIVERSE</span><b>Find your next story.</b></div>
+      </div>
+    </section>
+
+    <section class="stats-strip" aria-label="Site features">
+      <div><span class="stat-icon">⌕</span><span><b>Easy discovery</b><small>Search your next series</small></span></div>
+      <div><span class="stat-icon">◈</span><span><b>Curated library</b><small>Organised by genre</small></span></div>
+      <div><span class="stat-icon">▶</span><span><b>Licensed sources</b><small>Creator-approved videos</small></span></div>
+    </section>
+
+    <section class="library-section" id="library">
+      <div class="section-heading"><div><div class="eyebrow">THE COLLECTION</div><h2>Explore the library<span class="heading-dot">.</span></h2><p class="section-subtitle">Pick a mood. Find a world.</p></div><div class="library-count"><span id="resultCount">6</span> titles</div></div>
+      <div class="toolbar">
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search anime or genre..." autocomplete="off" aria-label="Search anime or genre"><kbd>/</kbd></label>
+        <div class="filter-row" id="filters" aria-label="Filter by genre"><button class="filter-chip selected" data-filter="All">All titles</button><button class="filter-chip" data-filter="Action">Action</button><button class="filter-chip" data-filter="Adventure">Adventure</button><button class="filter-chip" data-filter="Fantasy">Fantasy</button><button class="filter-chip" data-filter="Drama">Drama</button></div>
+      </div>
+      <div class="anime-grid" id="animeGrid" aria-live="polite"></div>
+      <div class="empty-state hidden" id="emptyState"><div class="empty-symbol">⌕</div><h3>No titles found</h3><p>Try a different search or genre.</p><button class="secondary-button" id="resetFilters">Reset filters</button></div>
+      <p class="demo-note">Sample catalogue for layout preview. No copyrighted episodes or unlicensed streams are included.</p>
+    </section>
+
+    <section class="feature-panel" id="about"><div class="feature-symbol">✦</div><div><div class="eyebrow">BUILT FOR ANIME FANS</div><h2>Your anime corner,<br><span class="gradient-text">made with care.</span></h2><p>NITIN ANIMES is being built as a clean place to discover series and organise authorised video sources. The catalogue and admin tools are a work in progress.</p></div><a href="admin.html" class="secondary-button">Open admin portal <span aria-hidden="true">↗</span></a></section>
+  </main>
+
+  <footer class="footer"><a class="brand footer-brand" href="#"><span class="footer-crown">♛</span><span>NITIN <b>ANIMES</b></span></a><span>Made for stories. Built responsibly.</span><a href="mailto:mythicsframestelegram@gmail.com">Contact the developer ↗</a></footer>
+
+  <dialog id="animeDialog" class="anime-dialog"><button class="dialog-close" id="closeDialog" aria-label="Close details">×</button><div class="dialog-art" id="dialogArt"><span id="dialogSymbol">✦</span></div><div class="dialog-content"><div class="eyebrow" id="dialogGenre">FEATURED SERIES</div><h2 id="dialogTitle">Anime title</h2><p id="dialogDescription"></p><div class="dialog-meta" id="dialogMeta"></div><div id="episodeArea" class="episode-area"><h3>Episodes</h3><p class="source-note">No authorised video source has been configured for this sample title yet.</p></div><button class="primary-button dialog-ok" id="dialogOk">Back to library</button></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
