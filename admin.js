@@ -55,10 +55,27 @@
   function showTab(tab){document.querySelectorAll(".admin-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.querySelectorAll(".admin-panel").forEach(p=>p.classList.toggle("hidden",p.id!=="panel-"+tab));}
   document.querySelectorAll(".admin-tab").forEach(button=>button.addEventListener("click",()=>showTab(button.dataset.tab)));
   function showForm(id,show=true){$(id).classList.toggle("hidden",!show);}
-  function resetAnimeForm(){ $("animeForm").reset();$("animeId").value="";$("animeFormTitle").textContent="Add anime"; }
+  function updateAnimePreview(){
+    const title=$("animeTitle").value.trim(), genre=$("animeGenre").value.trim(), year=$("animeYear").value.trim();
+    const synopsis=$("animeSynopsis").value.trim(), cover=safeUrl($("animeCover").value.trim()), status=$("animeStatus").value;
+    $("animePreviewTitle").textContent=title||"Your anime title";
+    $("animePreviewGenre").textContent=(genre||"GENRE").toUpperCase();
+    $("animePreviewYear").textContent=year||"—";
+    $("animePreviewSynopsis").textContent=synopsis||"Your synopsis will appear here.";
+    $("animePreviewSymbol").textContent=(title||"N A").split(/\s+/).filter(Boolean).slice(0,2).map(word=>word[0]).join("").toUpperCase()||"NA";
+    $("animePreviewStatus").textContent=status.toUpperCase();
+    $("animePreviewStatus").className="cover-status "+status;
+    const image=$("animePreviewImage");
+    image.hidden=!cover;
+    $("animePreviewSymbol").hidden=!!cover;
+    if(cover){image.onerror=()=>{image.hidden=true;$("animePreviewSymbol").hidden=false;};image.src=cover;}
+    else{image.removeAttribute("src");image.onerror=null;}
+  }
+  function resetAnimeForm(){ $("animeForm").reset();$("animeId").value="";$("animeFormTitle").textContent="Add anime";updateAnimePreview(); }
+  ["animeTitle","animeGenre","animeYear","animeCover","animeSynopsis","animeStatus"].forEach(id=>{ $(id).addEventListener("input",updateAnimePreview);$(id).addEventListener("change",updateAnimePreview); });
   $("newAnime").addEventListener("click",()=>{resetAnimeForm();showForm("animeForm");$("animeTitle").focus();});
   $("cancelAnime").addEventListener("click",()=>showForm("animeForm",false));
-  $("animeTable").addEventListener("click",async event=>{const edit=event.target.closest("[data-edit-anime]"),del=event.target.closest("[data-delete-anime]");if(edit){const row=animeRows.find(x=>x.id===edit.dataset.editAnime);if(!row)return;$("animeId").value=row.id;$("animeTitle").value=row.title;$("animeGenre").value=row.genre;$("animeYear").value=row.release_year||"";$("animeCover").value=row.cover_url||"";$("animeSynopsis").value=row.synopsis||"";$("animeStatus").value=row.status;$("animeFormTitle").textContent="Edit anime";showForm("animeForm");$("animeForm").scrollIntoView({behavior:"smooth",block:"start"});}if(del&&confirm("Delete this anime and its episodes? This cannot be undone.")){const {error}=await client.from("anime").delete().eq("id",del.dataset.deleteAnime);if(error)notice(error.message,true);else{notice("Anime deleted.");await refreshAll();}}});
+  $("animeTable").addEventListener("click",async event=>{const edit=event.target.closest("[data-edit-anime]"),del=event.target.closest("[data-delete-anime]");if(edit){const row=animeRows.find(x=>x.id===edit.dataset.editAnime);if(!row)return;$("animeId").value=row.id;$("animeTitle").value=row.title;$("animeGenre").value=row.genre;$("animeYear").value=row.release_year||"";$("animeCover").value=row.cover_url||"";$("animeSynopsis").value=row.synopsis||"";$("animeStatus").value=row.status;updateAnimePreview();$("animeFormTitle").textContent="Edit anime";showForm("animeForm");$("animeForm").scrollIntoView({behavior:"smooth",block:"start"});}if(del&&confirm("Delete this anime and its episodes? This cannot be undone.")){const {error}=await client.from("anime").delete().eq("id",del.dataset.deleteAnime);if(error)notice(error.message,true);else{notice("Anime deleted.");await refreshAll();}}});
   $("animeForm").addEventListener("submit",async event=>{event.preventDefault();const id=$("animeId").value;const payload={title:$("animeTitle").value.trim(),genre:$("animeGenre").value.trim(),release_year:$("animeYear").value?Number($("animeYear").value):null,cover_url:safeUrl($("animeCover").value)||null,synopsis:$("animeSynopsis").value.trim(),status:$("animeStatus").value,updated_at:new Date().toISOString()};const result=id?await client.from("anime").update(payload).eq("id",id):await client.from("anime").insert(payload);if(result.error){notice(result.error.message,true);return;}showForm("animeForm",false);resetAnimeForm();notice("Anime saved.");await refreshAll();});
   $("newEpisode").addEventListener("click",()=>{ $("episodeForm").reset();$("episodeId").value="";$("episodeNumber").value="1";$("episodeFormTitle").textContent="Add episode";fillAnimeSelect();showForm("episodeForm");$("episodeForm").scrollIntoView({behavior:"smooth",block:"start"});});
   $("cancelEpisode").addEventListener("click",()=>showForm("episodeForm",false));
