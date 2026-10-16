@@ -3,3 +3,12 @@ project_id = "YOUR_PROJECT_REF"
 
 [functions.manage-users]
 verify_jwt = true
+
+[functions.telegram-media]
+# The function validates the Supabase bearer token itself; disabling gateway JWT
+# validation allows browser CORS preflight requests to reach the function.
+verify_jwt = false
+
+[functions.drm-license-auth]
+# The function validates the Supabase bearer token itself.
+verify_jwt = false

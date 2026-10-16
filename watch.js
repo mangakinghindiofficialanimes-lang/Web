@@ -12,7 +12,16 @@
   player=new shaka.Player();await player.attach(video);
   player.configure({drm:{servers:{"com.widevine.alpha":drm.widevineLicenseServerUrl},advanced:{"com.widevine.alpha":{distinctiveIdentifierRequired:false,persistentStateRequired:true}}},offline:{usePersistentLicense:true}});
   player.getNetworkingEngine().registerRequestFilter(async(type,request)=>{
-   if(type!==shaka.net.NetworkingEngine.RequestType.LICENSE)return;
+   const requestUri=request.uris?.[0]||"";
+   const telegramBase=(drm.telegramMediaEndpoint||"").replace(/\/+$/,"");
+   if(type!==shaka.net.NetworkingEngine.RequestType.LICENSE){
+    if(telegramBase&&requestUri.startsWith(telegramBase+"/")){
+     if(!session?.access_token)throw new Error("Sign in is required for protected Telegram media.");
+     request.headers.Authorization="Bearer "+session.access_token;
+     request.headers.apikey=config.anonKey;
+    }
+    return;
+   }
    if(!session?.access_token)throw new Error("Sign in is required for a protected license.");
    const response=await fetch(drm.licenseTokenEndpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":config.anonKey},body:JSON.stringify({episode_id:episode.id,asset_uri:episode.video_url})});
    if(!response.ok)throw new Error("DRM authorization denied ("+response.status+").");
@@ -32,7 +41,9 @@
   $("watchActions").innerHTML='<button class="primary-button" id="saveOffline" disabled>Save for offline</button><a class="secondary-button" href="offline-library.html">My offline videos</a><a class="secondary-button" href="anime.html?id='+encodeURIComponent(row.anime_id)+'">More episodes</a><a class="secondary-button" href="account.html">My account</a>';
   if(!session?.access_token){notice("Sign in before protected playback. Offline downloads require a provider that supports persistent Widevine licenses.");return;}
   if(!configured()){notice("DRM is not configured. Set a real Widevine license URL and server-side authorization endpoint in drm-config.js. Playback is blocked rather than falling back to unprotected video.",true);return;}
-  if(!row.video_url||!/^https:\/\//i.test(row.video_url)||!(/\.(mpd|m3u8)(?:$|[?#])/i.test(row.video_url))){notice("Use an HTTPS DASH (.mpd) or DRM-packaged HLS (.m3u8) manifest. Direct MP4 is disabled.",true);return;}
+  const telegramBase=(drm.telegramMediaEndpoint||"").replace(/\/+$/,"");
+  const isTelegramManifest=!!telegramBase&&row.video_url?.startsWith(telegramBase+"/");
+  if(!row.video_url||!/^https:\/\//i.test(row.video_url)||!(isTelegramManifest||/\.(mpd|m3u8)(?:$|[?#])/i.test(row.video_url))){notice("Use an HTTPS DASH (.mpd) or DRM-packaged HLS (.m3u8) manifest. Direct MP4 is disabled.",true);return;}
   try{
    const video=$("episodeVideo");await createPlayer(video);await player.load(row.video_url);
    $("saveOffline").disabled=false;$("saveOffline").addEventListener("click",async()=>{
