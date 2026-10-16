@@ -75,7 +75,7 @@ The watch page now uses Shaka Player with Widevine DRM configuration and refuses
 Netlify/GitHub and Supabase do not issue Widevine licenses or package videos for DRM. Choose a commercial DRM/video platform that explicitly supports Google Widevine, encrypted DASH/HLS packaging, license authorization, and persistent/offline licenses for Android Chrome. Ask the vendor to confirm persistent browser licenses on your target devices before paying. Vendors to evaluate include castLabs DRMtoday, BuyDRM KeyOS, and EZDRM; these are examples to investigate, not services already integrated or endorsed by this repository.
 
 1. Create a provider account and configure a Widevine license service.
-2. Package videos you own or are licensed to distribute as DRM-encrypted DASH (.mpd) or supported DRM HLS (.m3u8). Upload the encrypted segments and manifest to storage/CDN with the provider's required CORS and byte-range settings.
+2. Package videos you own or are licensed to distribute as DRM-encrypted DASH (.mpd) or supported DRM HLS (.m3u8). For Telegram storage, follow [TELEGRAM_STORAGE.md](TELEGRAM_STORAGE.md) to store encrypted segments as individual Telegram files and register their file IDs privately.
 3. In drm-config.js, set widevineLicenseServerUrl to the provider's HTTPS license URL and licenseTokenEndpoint to your server-side authorization endpoint. These are endpoint URLs, not secrets.
 4. The repository includes `supabase/functions/drm-license-auth/index.ts` as a fail-closed scaffold. Deploy it with `supabase functions deploy drm-license-auth`, then integrate your chosen provider's server-side SDK/API. The scaffold validates the signed-in user and published episode, then returns HTTP 503 until a provider adapter is implemented. The finished endpoint must create provider-specific short-lived license authorization and return a JSON object with a headers map using the exact header format required by the provider. Never return signing keys or provider secrets. Do not blindly proxy arbitrary URLs or authorize arbitrary episode IDs.
 5. Configure the provider license server to reject requests without valid authorization and to issue persistent licenses only when supported. Allowlist your website origin in the provider's CORS settings.
@@ -91,11 +91,17 @@ The nodownload control and context-menu suppression are only interface restricti
 
 The repository contains the player integration and endpoint placeholders only. It is not yet working DRM until you select a provider, package encrypted media, and deploy the authorization endpoint. Do not paste provider secrets into GitHub, drm-config.js, or browser JavaScript.
 
-## 8. Security and remaining production work
+## 8. Telegram storage integration status
+
+The repository includes an authenticated Telegram media proxy and a private asset-index schema. This is a storage bridge, not a video packager or Widevine license server. The admin page does not yet upload Telegram files or create asset rows automatically; initial setup is documented in [TELEGRAM_STORAGE.md](TELEGRAM_STORAGE.md). Each proxied file must be below Telegram's hosted Bot API 20 MB download limit; target 15 MB or less.
+
+## 9. Security and remaining production work
 
 - Never commit a database password, Supabase secret key, or service-role key.
 - RLS protects database rows; frontend visibility checks alone are not security.
 - The sample catalogue is illustrative and includes no episode media.
+- Telegram proxying requires a private channel, server-side bot token, asset schema, and Edge Function secrets.
+- Telegram proxying adds latency and bandwidth usage; free tiers are for small tests, not guaranteed production delivery.
 - User creation/deletion requires the Edge Function deployed and configured.
 - Test every role with separate viewer and admin accounts before using real users.
 - Analytics only count events recorded after the schema is installed; this is not historical analytics or an external analytics service.
