@@ -66,11 +66,25 @@ function renderCards() {
   }).join("");
 }
 async function loadCatalogue() {
-  if (!supabaseClient) { renderCards(); return; }
+  const demoNote=document.querySelector(".demo-note");
+  if (!supabaseClient) {
+    titles=sampleTitles.slice();
+    if(demoNote) demoNote.textContent="Sample catalogue preview. Connect Supabase to show anime cards published from the admin panel.";
+    renderCards();
+    return;
+  }
   const {data,error} = await supabaseClient.from("anime").select("id,title,synopsis,genre,release_year,cover_url,status").eq("status","published").order("created_at",{ascending:false});
-  if (error) { console.warn("Catalogue load failed; showing demo catalogue.", error.message); renderCards(); return; }
+  if (error) {
+    console.warn("Catalogue load failed.", error.message);
+    titles=[];
+    if(demoNote) demoNote.textContent="The live catalogue could not load. Check the Supabase configuration and published-card permissions.";
+    renderCards();
+    return;
+  }
   titles = (data || []).map(item => ({...item, type:"Series", tags:[item.genre], demo:false}));
-  if (!titles.length) titles = sampleTitles.slice();
+  if(demoNote) demoNote.textContent=titles.length
+    ? "Live catalogue · cards published by NITIN ANIMES admins."
+    : "No published anime cards yet. Sign in to the admin panel and publish your first card.";
   renderCards();
 }
 async function openDetails(id) {
