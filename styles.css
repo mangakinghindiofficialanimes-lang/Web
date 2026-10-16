@@ -14,3 +14,18 @@
 
 .analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:17px}.analytics-box{min-width:0;border:1px solid var(--line);border-radius:13px;padding:15px;background:#ffffff02}.analytics-box h3{font-family:"Space Grotesk",sans-serif;font-size:13px;margin:0 0 14px}.analytics-bar-row{margin:12px 0}.analytics-bar-row>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#c6c7d2}.analytics-bar-row b{color:#e6ddff}.analytics-bar-track{height:6px;border-radius:99px;background:#ffffff0b;margin-top:7px;overflow:hidden}.analytics-bar-track i{height:100%;display:block;border-radius:99px;background:linear-gradient(90deg,#a78bfa,#72e4e7)}.trend-bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;min-height:145px;align-items:end}.trend-day{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}.trend-bar-space{height:94px;width:100%;display:flex;align-items:end;justify-content:center}.trend-bar-space i{display:block;width:min(24px,75%);min-height:2px;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,#72e4e7,#a78bfa)}.trend-day b{font-size:9px;color:#ddd5f9}.trend-day small{font-size:9px;color:#858a9d}
 @media(max-width:700px){.analytics-grid{grid-template-columns:1fr}.trend-bar-space{height:80px}}
+
+
+/* Live anime-card editor preview */
+.anime-card-preview-wrap{margin:20px 0 8px;padding:16px;border:1px solid var(--line);border-radius:13px;background:#ffffff03}
+.preview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.preview-heading b{font-size:12px;color:#e9e2ff}
+.preview-heading span{font-size:10px;color:var(--muted)}
+.admin-card-preview{max-width:320px}
+#animePreviewCover{background:linear-gradient(135deg,#30235d,#6c4d9f 50%,#ed9fce)}
+#animePreviewImage{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+#animePreviewSymbol[hidden],#animePreviewImage[hidden]{display:none!important}
+#animePreviewStatus.draft{color:#fcd34d}
+#animePreviewStatus.published{color:#6ee7b7}
+#animePreviewStatus.archived{color:#9ca3af}
+@media(max-width:600px){.anime-card-preview-wrap{padding:12px}.preview-heading{align-items:flex-start;flex-direction:column;gap:3px}.admin-card-preview{max-width:100%}}
