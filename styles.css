@@ -29,3 +29,11 @@
 #animePreviewStatus.published{color:#6ee7b7}
 #animePreviewStatus.archived{color:#9ca3af}
 @media(max-width:600px){.anime-card-preview-wrap{padding:12px}.preview-heading{align-items:flex-start;flex-direction:column;gap:3px}.admin-card-preview{max-width:100%}}
+
+/* Admin anime-card management tools */
+.anime-list-tools{display:grid;grid-template-columns:minmax(0,2fr) minmax(150px,1fr);gap:10px;margin:0 0 13px}
+.admin-search{display:grid;gap:6px;color:var(--muted);font-size:10px}
+.admin-search input,.admin-search select{width:100%;min-width:0;background:#090c14;color:var(--text);border:1px solid #ffffff1c;border-radius:9px;padding:10px 12px;font:inherit}
+.admin-cover-thumb{display:block;width:48px;height:62px;object-fit:cover;border:1px solid var(--line);border-radius:7px}
+.admin-cover-fallback{display:grid;place-items:center;background:linear-gradient(135deg,#30235d,#6c4d9f 50%,#ed9fce);font-family:"Space Grotesk",sans-serif;font-weight:700;color:#fff;font-size:13px}
+@media(max-width:600px){.anime-list-tools{grid-template-columns:1fr}}
