@@ -113,8 +113,22 @@ app.use("/api/:service", async (req, res) => {
   const base = upstreams.get(req.params.service);
   if (!base) return res.status(404).json({ error: "unknown_service" });
 
-  const suffix = req.path.replace(/^\//, "");
-  const target = new URL(suffix, base);
+  // Accept only plain, single path segments. Reject percent-encoding and dot segments
+  // to prevent encoded traversal, double-decoding, and URL-normalization surprises.
+  const suffix = req.path.replace(/^\\//, "");
+  const segments = suffix ? suffix.split("/") : [];
+  const safeSegments = segments.every((segment) =>
+    segment.length > 0 &&
+    segment !== "." &&
+    segment !== ".." &&
+    /^[A-Za-z0-9._~-]+$/.test(segment)
+  );
+  if (!safeSegments) {
+    return res.status(400).json({ error: "invalid_upstream_path" });
+  }
+
+  const target = new URL(base.href);
+  target.pathname = base.pathname + segments.join("/");
   target.search = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
   if (target.origin !== base.origin || !target.pathname.startsWith(base.pathname)) {
     return res.status(400).json({ error: "invalid_upstream_path" });
