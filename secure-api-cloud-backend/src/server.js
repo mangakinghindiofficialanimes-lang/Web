@@ -137,16 +137,27 @@ app.use("/api/:service", async (req, res) => {
       init.body = JSON.stringify(req.body);
     }
     const upstreamResponse = await fetch(target, init);
-    const body = await upstreamResponse.arrayBuffer();
-    if (body.byteLength > RESPONSE_LIMIT_BYTES) {
-      return res.status(502).json({ error: "upstream_response_too_large" });
+    const reader = upstreamResponse.body?.getReader();
+    const chunks = [];
+    let totalBytes = 0;
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > RESPONSE_LIMIT_BYTES) {
+          await reader.cancel().catch(() => {});
+          return res.status(502).json({ error: "upstream_response_too_large" });
+        }
+        chunks.push(Buffer.from(value));
+      }
     }
     res.status(upstreamResponse.status);
     const contentType = upstreamResponse.headers.get("content-type");
     if (contentType) res.set("Content-Type", contentType);
     res.set("Cache-Control", "no-store");
     // Intentionally do not forward cookies, hop-by-hop headers, or upstream server headers.
-    return res.send(Buffer.from(body));
+    return res.send(Buffer.concat(chunks, totalBytes));
   } catch (error) {
     const timedOut = error?.name === "AbortError";
     return res.status(timedOut ? 504 : 502).json({ error: timedOut ? "upstream_timeout" : "upstream_unavailable" });
