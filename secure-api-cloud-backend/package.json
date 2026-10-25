@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test",
-    "check": "node --check src/server.js && node --check test/server.test.js"
+    "check": "node --check src/server.js && node --check src/protection-requests.js && node --check test/server.test.js && node --check test/protection-requests.test.js"
   },
   "dependencies": {
     "express": "^5.1.0",
