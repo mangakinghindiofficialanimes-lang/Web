@@ -5,11 +5,13 @@ on:
     branches: [main]
     paths:
       - "secure-api-cloud-prototype/**"
+      - "secure-api-cloud-backend/**"
       - ".github/workflows/secure-api-cloud-weekly.yml"
   pull_request:
     branches: [main]
     paths:
       - "secure-api-cloud-prototype/**"
+      - "secure-api-cloud-backend/**"
       - ".github/workflows/secure-api-cloud-weekly.yml"
   schedule:
     - cron: "23 4 * * 1"
@@ -21,6 +23,35 @@ permissions:
   actions: read
 
 jobs:
+  backend-tests:
+    name: Backend tests and dependency audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: secure-api-cloud-backend
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: secure-api-cloud-backend/package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit
+
+      - name: Syntax checks
+        run: npm run check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
   codeql:
     name: Analyze JavaScript and TypeScript
     runs-on: ubuntu-latest
