@@ -1,0 +1,18 @@
+{
+  "name": "nitin-secure-api-cloud-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Early-stage HTTPS API gateway prototype with registered upstreams.",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "check": "node --check src/server.js && node --check src/protection-requests.js && node --check test/server.test.js && node --check test/protection-requests.test.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0"
+  }
+}

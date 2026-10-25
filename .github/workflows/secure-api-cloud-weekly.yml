@@ -1,0 +1,70 @@
+name: Secure API Cloud weekly security analysis
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "secure-api-cloud-prototype/**"
+      - "secure-api-cloud-backend/**"
+      - ".github/workflows/secure-api-cloud-weekly.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "secure-api-cloud-prototype/**"
+      - "secure-api-cloud-backend/**"
+      - ".github/workflows/secure-api-cloud-weekly.yml"
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  backend-tests:
+    name: Backend tests and dependency audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: secure-api-cloud-backend
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --no-audit
+
+      - name: Syntax checks
+        run: npm run check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+  codeql:
+    name: Analyze JavaScript and TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript-typescript"
