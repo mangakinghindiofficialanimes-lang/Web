@@ -11,6 +11,7 @@ This is an early Node.js HTTPS-gateway application intended for a controlled tes
 - Fixed, administrator-configured upstream registry (no URL supplied by public callers).
 - HTTPS-only upstream configuration, redirects rejected, request-size limit, response-size limit, timeout, basic rate limiting, and minimal response-header forwarding.
 - A small automated test suite.
+- DRM architecture and production rollout specification in [DRM-ARCHITECTURE.md](./DRM-ARCHITECTURE.md). This is a design document, not a working DRM implementation.
 
 ## Not included yet
 
@@ -18,6 +19,7 @@ This is an early Node.js HTTPS-gateway application intended for a controlled tes
 - Per-user accounts, per-API tokens, database-backed route registry, quotas or billing.
 - A managed vault, automatic key rotation, robust distributed rate limiting, WAF or DDoS service.
 - End-to-end payload encryption.
+- Working Widevine, FairPlay or PlayReady license integration, media packaging, or a protected media player.
 - Automatic server/OS patching on customer-owned origins.
 - A production security audit.
 
@@ -53,7 +55,8 @@ For example, if the administrator configures `{"demo":"https://api.your-domain.e
 - Configure `trust proxy` for the exact number of trusted proxies in the chosen host; incorrect proxy trust can weaken IP-based rate limiting.
 - HTTPS from the gateway to an origin is encrypted in transit but does not hide request plaintext from a gateway that terminates client TLS. For gateway-blind payload confidentiality, add application-layer end-to-end encryption and client/origin key handling.
 - Do not promise that this prototype protects a server from every attack. Test, threat-model, and obtain an independent security review before production use.
+- DRM support is not universal across browsers and devices. Follow [DRM-ARCHITECTURE.md](./DRM-ARCHITECTURE.md); a licensed DRM provider and platform-specific testing are required before production.
 
 ## Next milestone
 
-Implement a real owner-enrolled outbound tunnel with per-origin credentials, revocation and heartbeat, then replace the shared prototype bearer token with per-user/per-API credentials and a server-side secret manager.
+Implement a real owner-enrolled outbound tunnel with per-origin credentials, revocation and heartbeat, then replace the shared prototype bearer token with per-user/per-API credentials and a server-side secret manager. DRM provider integration begins only after the media requirements and licensed provider are chosen.
