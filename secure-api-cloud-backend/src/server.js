@@ -115,7 +115,7 @@ app.use("/api/:service", async (req, res) => {
 
   // Accept only plain, single path segments. Reject percent-encoding and dot segments
   // to prevent encoded traversal, double-decoding, and URL-normalization surprises.
-  const suffix = req.path.replace(/^\\//, "");
+  const suffix = req.path.startsWith("/") ? req.path.slice(1) : req.path;
   const segments = suffix ? suffix.split("/") : [];
   const safeSegments = segments.every((segment) =>
     segment.length > 0 &&
