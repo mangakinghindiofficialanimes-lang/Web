@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<meta name="description" content="Nitin Secure API Cloud security gateway prototype dashboard.">
+<title>Nitin Secure API Cloud — Prototype</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121c2e;--line:#26354d;--text:#edf4ff;--muted:#9fb0c9;--blue:#79b8ff;--green:#73dfb0;--amber:#ffd27a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#152746 0,var(--bg) 52%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}main{max-width:1080px;margin:auto;padding:24px 16px 56px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.logo{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#19365c;border:1px solid #315783;font-size:24px}.eyebrow{color:var(--blue);font-size:.78rem;font-weight:750;letter-spacing:.12em;text-transform:uppercase}.pill{border:1px solid #66542d;background:#302718;color:var(--amber);padding:6px 10px;border-radius:999px;font-size:.8rem;font-weight:700}h1{font-size:clamp(1.7rem,5vw,2.7rem);line-height:1.12;margin:28px 0 10px}p{color:var(--muted);margin:0}.intro{max-width:760px}.notice{margin:22px 0;padding:14px 16px;border:1px solid #66542d;border-radius:14px;background:#251f16;color:#f8dfad}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:18px}.card{border:1px solid var(--line);background:linear-gradient(155deg,#142036,#101827);border-radius:16px;padding:18px;min-width:0}.card h2{font-size:1.02rem;margin:8px 0}.icon{font-size:1.35rem}.label{font-size:.78rem;color:var(--muted)}.value{font-size:1.15rem;font-weight:750;margin:4px 0 8px}.good{color:var(--green)}.pending{color:var(--amber)}.section{margin-top:30px}.section h2{font-size:1.25rem;margin:0 0 12px}.steps{display:grid;gap:10px}.step{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:12px;background:#101a2b}.num{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:9px;background:#203a5e;color:#d8eaff;font-weight:800}.step b{display:block;margin-bottom:3px}.step span{color:var(--muted);font-size:.92rem}.btn{display:inline-block;border:1px solid #3c6899;background:#17365b;color:white;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:700;margin:8px 8px 0 0}.btn:focus-visible{outline:3px solid var(--blue);outline-offset:3px}code{overflow-wrap:anywhere;color:#d5e6ff}.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:.86rem;color:var(--muted)}ul{padding-left:20px;color:var(--muted)}li{margin:7px 0}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <div class="brand"><div class="logo" aria-hidden="true">⛨</div><div><div class="eyebrow">Security gateway project</div><strong>Nitin Secure API Cloud</strong></div></div>
+  <span class="pill">PROTOTYPE · NOT PROTECTING LIVE TRAFFIC</span>
+</header>
+<h1>One secure doorway for your APIs.</h1>
+<p class="intro">A planned security layer for APIs running on servers owned by their developers. The gateway will manage access and routing; origin servers will keep running their own application code.</p>
+<div class="notice"><strong>Prototype status:</strong> This page is a dashboard mock-up only. It does not encrypt, proxy, scan, patch, or protect any live server yet. Do not enter real API keys or secrets here.</div>
+<section class="grid" aria-label="Security service status">
+  <article class="card"><div class="icon" aria-hidden="true">🔒</div><div class="label">Client transport</div><div class="value good">HTTPS required</div><p>Production rule to enforce at the edge and origin.</p></article>
+  <article class="card"><div class="icon" aria-hidden="true">↔️</div><div class="label">Origin tunnel</div><div class="value pending">Not connected</div><p>Connect an owner-managed outbound tunnel before routing traffic.</p></article>
+  <article class="card"><div class="icon" aria-hidden="true">🗝️</div><div class="label">Key management</div><div class="value pending">Not configured</div><p>Use a managed secret store; never place private keys in browser code.</p></article>
+  <article class="card"><div class="icon" aria-hidden="true">🛡️</div><div class="label">Vulnerability scanning</div><div class="value pending">Workflow pending</div><p>Scans and update alerts must pass before release.</p></article>
+</section>
+<section class="section">
+  <h2>Planned request path</h2>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div><b>Browser or app</b><span>Calls a public HTTPS API hostname and authenticates.</span></div></div>
+    <div class="step"><div class="num">2</div><div><b>Gateway</b><span>Checks identity, route allowlist, request size, method, rate limits and security policy.</span></div></div>
+    <div class="step"><div class="num">3</div><div><b>Authenticated tunnel</b><span>Forwards permitted traffic to a registered origin without exposing its inbound port.</span></div></div>
+    <div class="step"><div class="num">4</div><div><b>Origin server</b><span>Processes the request and returns a response over the protected connection.</span></div></div>
+  </div>
+</section>
+<section class="section">
+  <h2>Release security checklist</h2>
+  <ul>
+    <li>Use maintained TLS and cryptographic libraries; do not invent a custom encryption algorithm.</li>
+    <li>Keep origin tunnel credentials and API secrets in server-side secret storage.</li>
+    <li>Scan dependencies weekly and when code changes; triage critical alerts immediately.</li>
+    <li>Test fixes in CI and staging, verify release artifacts, deploy gradually, and keep rollback ready.</li>
+    <li>Never automatically install unreviewed code on customer-owned servers.</li>
+  </ul>
+  <a class="btn" href="README.md">Prototype setup guide</a>
+  <a class="btn" href="SECURITY-PLAN.md">Security architecture</a>
+</section>
+<footer class="foot">Nitin Secure API Cloud · Early prototype. No security guarantee is implied. A production launch requires threat modelling, independent review, monitoring, incident response and tested recovery.</footer>
+</main>
+</body>
+</html>
