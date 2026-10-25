@@ -11,7 +11,10 @@ This is an early Node.js HTTPS-gateway application intended for a controlled tes
 - Fixed, administrator-configured upstream registry (no URL supplied by public callers).
 - HTTPS-only upstream configuration, redirects rejected, request-size limit, response-size limit, timeout, basic rate limiting, and minimal response-header forwarding.
 - A small automated test suite.
-- DRM architecture and production rollout specification in [DRM-ARCHITECTURE.md](./DRM-ARCHITECTURE.md). This is a design document, not a working DRM implementation.
+- DRM architecture and production rollout specification in [DRM-ARCHITECTURE.md](./DRM-ARCHITECTURE.md).
+- User-requested protection profile and approval workflow specification in [PROTECTION-REQUESTS.md](./PROTECTION-REQUESTS.md).
+
+The two documents above describe the intended design; they are not working DRM or a functioning request portal.
 
 ## Not included yet
 
@@ -20,6 +23,7 @@ This is an early Node.js HTTPS-gateway application intended for a controlled tes
 - A managed vault, automatic key rotation, robust distributed rate limiting, WAF or DDoS service.
 - End-to-end payload encryption.
 - Working Widevine, FairPlay or PlayReady license integration, media packaging, or a protected media player.
+- A working user request portal, database-backed policy engine or approval dashboard.
 - Automatic server/OS patching on customer-owned origins.
 - A production security audit.
 
@@ -55,8 +59,9 @@ For example, if the administrator configures `{"demo":"https://api.your-domain.e
 - Configure `trust proxy` for the exact number of trusted proxies in the chosen host; incorrect proxy trust can weaken IP-based rate limiting.
 - HTTPS from the gateway to an origin is encrypted in transit but does not hide request plaintext from a gateway that terminates client TLS. For gateway-blind payload confidentiality, add application-layer end-to-end encryption and client/origin key handling.
 - Do not promise that this prototype protects a server from every attack. Test, threat-model, and obtain an independent security review before production use.
-- DRM support is not universal across browsers and devices. Follow [DRM-ARCHITECTURE.md](./DRM-ARCHITECTURE.md); a licensed DRM provider and platform-specific testing are required before production.
+- DRM support is not universal across browsers and devices. A licensed DRM provider and platform-specific testing are required before production.
+- Users may request extra protection, but changes must be reviewed, tested and approved before production rollout. See [PROTECTION-REQUESTS.md](./PROTECTION-REQUESTS.md).
 
 ## Next milestone
 
-Implement a real owner-enrolled outbound tunnel with per-origin credentials, revocation and heartbeat, then replace the shared prototype bearer token with per-user/per-API credentials and a server-side secret manager. DRM provider integration begins only after the media requirements and licensed provider are chosen.
+Implement authenticated tenant accounts and a database-backed protection request workflow, then an owner-enrolled outbound tunnel with per-origin credentials, revocation and heartbeat. Replace the shared prototype bearer token with per-user/per-API credentials and a server-side secret manager. DRM provider integration begins only after the media requirements and licensed provider are chosen.
