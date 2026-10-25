@@ -11,6 +11,7 @@ This is an early Node.js HTTPS-gateway application intended for a controlled tes
 - Fixed, administrator-configured upstream registry (no URL supplied by public callers).
 - HTTPS-only upstream configuration, redirects rejected, request-size limit, response-size limit, timeout, basic rate limiting, and minimal response-header forwarding.
 - A small automated test suite.
+- A tested foundation module for validating protection-request inputs and enforcing allowed review/rollout status transitions.
 - DRM architecture and production rollout specification in [DRM-ARCHITECTURE.md](./DRM-ARCHITECTURE.md).
 - User-requested protection profile and approval workflow specification in [PROTECTION-REQUESTS.md](./PROTECTION-REQUESTS.md).
 
@@ -23,7 +24,7 @@ The two documents above describe the intended design; they are not working DRM o
 - A managed vault, automatic key rotation, robust distributed rate limiting, WAF or DDoS service.
 - End-to-end payload encryption.
 - Working Widevine, FairPlay or PlayReady license integration, media packaging, or a protected media player.
-- A working user request portal, database-backed policy engine or approval dashboard.
+- A working user request portal, database-backed policy engine or approval dashboard. The current protection-request module is only validation/state-transition logic; it is not exposed as HTTP routes and stores no requests.
 - Automatic server/OS patching on customer-owned origins.
 - A production security audit.
 
@@ -64,4 +65,4 @@ For example, if the administrator configures `{"demo":"https://api.your-domain.e
 
 ## Next milestone
 
-Implement authenticated tenant accounts and a database-backed protection request workflow, then an owner-enrolled outbound tunnel with per-origin credentials, revocation and heartbeat. Replace the shared prototype bearer token with per-user/per-API credentials and a server-side secret manager. DRM provider integration begins only after the media requirements and licensed provider are chosen.
+Add tenant-scoped authentication and authorization, persistent storage and audit events around the protection-request module, then expose a protected API and approval dashboard. After that, build an owner-enrolled outbound tunnel with per-origin credentials, revocation and heartbeat. Replace the shared prototype bearer token with per-user/per-API credentials and a server-side secret manager. DRM provider integration begins only after the media requirements and licensed provider are chosen.
